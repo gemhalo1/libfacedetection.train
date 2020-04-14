@@ -317,7 +317,7 @@ class FaceRectLMDataset(data.Dataset):
     def __getitem__(self, index):
         img_id = self.ids[index]
         target = ET.parse(self._annopath % img_id[1]).getroot()
-        img = cv2.imread(self._imgpath % img_id[0], cv2.IMREAD_COLOR)
+        img = cv2.imread(self._imgpath % self._fix_path(img_id[0]), cv2.IMREAD_COLOR)
         height, width, _ = img.shape
 
         if self.target_transform is not None:
@@ -330,6 +330,13 @@ class FaceRectLMDataset(data.Dataset):
 
     def __len__(self):
         return len(self.ids)
+
+    def _fix_path(self, img_path):
+        pos = img_path.index('--')
+        prefix = img_path[:pos]
+        pos2 = img_path.index('_' + prefix, len(prefix))
+        dir_name = img_path[:pos2]
+        return dir_name + '/' + img_path[pos2+1:]
 
 
 def detection_collate(batch):

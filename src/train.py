@@ -14,8 +14,6 @@ import datetime
 import math
 import numpy as np
 
-sys.path.append(os.getcwd() + '/../../src')
-
 from data import FaceRectLMDataset, detection_collate
 from multibox_loss import MultiBoxLoss
 from prior_box import PriorBox
@@ -23,8 +21,8 @@ from config import cfg
 from yufacedetectnet import YuFaceDetectNet
 
 parser = argparse.ArgumentParser(description='YuMobileNet Training')
-parser.add_argument('--training_face_rect_dir', default='../../data/WIDER_FACE_rect', help='Training dataset directory')
-parser.add_argument('--training_face_landmark_dir', default='../../data/WIDER_FACE_landmark', help='Training dataset directory')
+parser.add_argument('--training_face_rect_dir', default='../data/WIDER_FACE_rect', help='Training dataset directory')
+parser.add_argument('--training_face_landmark_dir', default='../data/WIDER_FACE_landmark', help='Training dataset directory')
 parser.add_argument('-b', '--batch_size', default=16, type=int, help='Batch size for training')
 parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
 parser.add_argument('--gpu_ids', default='0', help='the IDs of GPU')
@@ -76,7 +74,7 @@ if len(gpu_ids) > 1 :
     net = torch.nn.DataParallel(net, device_ids=gpu_ids)
 
 #device = torch.device(args.device)
-device = torch.device('cuda:'+str(gpu_ids[0]))
+device = torch.device('cuda:'+str(gpu_ids[0])) if torch.cuda.is_available() else torch.device('cpu:0')
 cudnn.benchmark = True
 net = net.to(device)
 
